@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Databases and application data
+*.sqlite
+*.sqlite3
+*.db
+*.json
+*.jsonl
+*.ndjson
+*.csv
+*.tsv
+*.parquet
+*.xlsx
+*.xls
+*.feather
+*.pkl
+*.pickle
+*export*
+*backup*
+
+# Environment variables, credentials, and private keys
+.env
+.env.*
+*password*
+*passwd*
+*secret*
+*credential*
+*.pem
+*.key
+*.p12
+*.pfx
