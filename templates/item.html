@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ item.name or 'Item' }} · Vault</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="container detail-container">
+    <a class="back" href="{{ url_for('index') }}">← All items</a>
+    <header class="detail-header">
+      <div><p class="eyebrow">{{ item.type|item_type }}{% if folder %} · {{ folder }}{% endif %}</p><h1>{{ item.name or 'Untitled' }}{% if item.favorite %} <span class="star">★</span>{% endif %}</h1></div>
+    </header>
+
+    {% if item.login %}
+    <section class="detail-card"><h2>Login</h2>
+      {% if item.login.username %}<div class="field"><span>Username</span><code>{{ item.login.username }}</code></div>{% endif %}
+      {% if item.login.password %}<div class="field"><span>Password</span><code class="secret">{{ item.login.password }}</code></div>{% endif %}
+      {% for uri in item.login.uris or [] %}{% if uri.uri %}<div class="field"><span>Website</span><a href="{{ uri.uri }}" target="_blank" rel="noopener noreferrer">{{ uri.uri }}</a></div>{% endif %}{% endfor %}
+      {% for credential in item.login.fido2Credentials or [] %}<div class="field"><span>Passkey</span><code>{{ credential.credentialId or 'Passkey credential' }}</code></div>{% endfor %}
+    </section>
+    {% endif %}
+
+    {% if item.fields %}<section class="detail-card"><h2>Custom fields</h2>
+      {% for field in item.fields %}<div class="field"><span>{{ field.name or 'Field' }}</span><code class="secret">{{ field.value or '' }}</code></div>{% endfor %}
+    </section>{% endif %}
+    {% if item.notes %}<section class="detail-card"><h2>Notes</h2><pre>{{ item.notes }}</pre></section>{% endif %}
+    {% if item.card %}<section class="detail-card"><h2>Card</h2>{% for key, value in item.card.items() if value %}<div class="field"><span>{{ key|replace('_',' ')|title }}</span><code class="secret">{{ value }}</code></div>{% endfor %}</section>{% endif %}
+    {% if item.identity %}<section class="detail-card"><h2>Identity</h2>{% for key, value in item.identity.items() if value %}<div class="field"><span>{{ key|replace('_',' ')|title }}</span><code class="secret">{{ value }}</code></div>{% endfor %}</section>{% endif %}
+    <section class="detail-card"><h2>Details</h2>
+      {% if item.creationDate %}<div class="field"><span>Created</span><span>{{ item.creationDate }}</span></div>{% endif %}
+      {% if item.revisionDate %}<div class="field"><span>Modified</span><span>{{ item.revisionDate }}</span></div>{% endif %}
+    </section>
+    <footer>Sensitive vault data · Keep this page private</footer>
+  </main>
+</body>
+</html>

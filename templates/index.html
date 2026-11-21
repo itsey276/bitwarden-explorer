@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vault search</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="container">
+    <header class="topbar">
+      <div><p class="eyebrow">LOCAL VAULT BROWSER</p><h1>Items</h1></div>
+      <span class="count">{{ total }} result{{ '' if total == 1 else 's' }}</span>
+    </header>
+    <form class="filters" method="get" action="/">
+      <label class="search-label">Search
+        <input type="search" name="q" value="{{ q }}" placeholder="Name, username, URL, notes…" autofocus>
+      </label>
+      <label>Item type
+        <select name="type">
+          <option value="">All types</option>
+          {% for row in types %}<option value="{{ row.type }}" {% if selected_type == row.type|string %}selected{% endif %}>{{ row.type|item_type }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Folder
+        <select name="folder">
+          <option value="">All folders</option>
+          <option value="none" {% if selected_folder == 'none' %}selected{% endif %}>No folder</option>
+          {% for folder in folders %}<option value="{{ folder.id }}" {% if selected_folder == folder.id %}selected{% endif %}>{{ folder.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="favorite" value="1" {% if favorite == '1' %}checked{% endif %}> Favorites</label>
+      <button type="submit">Search</button>
+      {% if q or selected_type or selected_folder or favorite %}<a class="reset" href="/">Clear</a>{% endif %}
+    </form>
+
+    {% if items %}
+    <section class="item-list" aria-label="Search results">
+      {% for item in items %}
+      <a class="item-card" href="{{ url_for('item_detail', item_id=item.id) }}">
+        <div class="item-heading"><h2>{{ item.name or 'Untitled' }}</h2>{% if item.favorite %}<span class="star" title="Favorite">★</span>{% endif %}</div>
+        <div class="item-meta"><span class="badge">{{ item.type|item_type }}</span>{% if item.username %}<span>{{ item.username }}</span>{% endif %}</div>
+        {% if item.uri %}<p class="uri">{{ item.uri.split('\n')[0] }}</p>{% endif %}
+      </a>
+      {% endfor %}
+    </section>
+    {% else %}<div class="empty"><h2>No matching items</h2><p>Try changing or clearing your filters.</p></div>{% endif %}
+
+    {% if page_count > 1 %}
+    <nav class="pagination" aria-label="Pagination">
+      {% if page > 1 %}<a href="{{ url_for('index', q=q, type=selected_type, folder=selected_folder, favorite=favorite, page=page-1) }}">← Previous</a>{% else %}<span></span>{% endif %}
+      <span>Page {{ page }} of {{ page_count }}</span>
+      {% if page < page_count %}<a href="{{ url_for('index', q=q, type=selected_type, folder=selected_folder, favorite=favorite, page=page+1) }}">Next →</a>{% else %}<span></span>{% endif %}
+    </nav>
+    {% endif %}
+    <footer>Private local interface · Avoid exposing this app to your network</footer>
+  </main>
+</body>
+</html>

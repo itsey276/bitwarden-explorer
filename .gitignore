@@ -18,7 +18,6 @@ __pycache__/
 *.feather
 *.pkl
 *.pickle
-*export*
 *backup*
 
 # Environment variables, credentials, and private keys
